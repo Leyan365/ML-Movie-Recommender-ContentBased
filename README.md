@@ -1,4 +1,4 @@
-<img width="1824" height="923" alt="m2" src="https://github.com/user-attachments/assets/1b6af8a6-2b4f-45c0-9a54-3f87b592c1b3" /># 🎬 ML-Movie-Recommender-ContentBased
+# 🎬 ML-Movie-Recommender-ContentBased
 
 An End-to-End Movie Recommender System built using **Content-Based Filtering**, **TF-IDF Vectorization**, and deployed with **Streamlit**. The system recommends movies by analyzing metadata such as keywords, genres, cast, crew (director), and plot overview.
 
