@@ -1,0 +1,11 @@
+# .gitignore file content (Ensure these are present)
+venv/
+.venv/
+__pycache__/
+*.pyc
+
+# Data and Model Artifacts to be Ignored
+tmdb_5000_movies.csv
+tmdb_5000_credits.csv
+similarity.pkl
+movies.pkl

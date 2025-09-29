@@ -1,0 +1,245 @@
+import pandas as pd
+import numpy as np
+
+movies = pd.read_csv('tmdb_5000_movies.csv')
+credits = pd.read_csv('tmdb_5000_credits.csv')
+
+movies.head(1)
+
+budget	genres	homepage	id	keywords	original_language	original_title	overview	popularity	production_companies	production_countries	release_date	revenue	runtime	spoken_languages	status	tagline	title	vote_average	vote_count
+0	237000000	[{"id": 28, "name": "Action"}, {"id": 12, "nam...	http://www.avatarmovie.com/	19995	[{"id": 1463, "name": "culture clash"}, {"id":...	en	Avatar	In the 22nd century, a paraplegic Marine is di...	150.437577	[{"name": "Ingenious Film Partners", "id": 289...	[{"iso_3166_1": "US", "name": "United States o...	2009-12-10	2787965087	162.0	[{"iso_639_1": "en", "name": "English"}, {"iso...	Released	Enter the World of Pandora.	Avatar	7.2	11800
+
+movies.shape
+(4803, 20)
+
+credits.head(1)
+
+movie_id	title	cast	crew
+0	19995	Avatar	[{"cast_id": 242, "character": "Jake Sully", "...	[{"credit_id": "52fe48009251416c750aca23", "de...
+
+credits.shape
+(4803, 4)
+
+movies = movies.merge(credits,on='title')
+movies.head(1)
+
+
+budget	genres	homepage	id	keywords	original_language	original_title	overview	popularity	production_companies	...	runtime	spoken_languages	status	tagline	title	vote_average	vote_count	movie_id	cast	crew
+0	237000000	[{"id": 28, "name": "Action"}, {"id": 12, "nam...	http://www.avatarmovie.com/	19995	[{"id": 1463, "name": "culture clash"}, {"id":...	en	Avatar	In the 22nd century, a paraplegic Marine is di...	150.437577	[{"name": "Ingenious Film Partners", "id": 289...	...	162.0	[{"iso_639_1": "en", "name": "English"}, {"iso...	Released	Enter the World of Pandora.	Avatar	7.2	11800	19995	[{"cast_id": 242, "character": "Jake Sully", "...	[{"credit_id": "52fe48009251416c750aca23", "de...
+1 rows × 23 columns
+
+# genres ,id ,keyword ,title ,overview ,cast ,crew
+movies = movies[['id','title','overview','genres','keywords','cast','crew']]
+movies.head()
+
+
+id	title	overview	genres	keywords	cast	crew
+0	19995	Avatar	In the 22nd century, a paraplegic Marine is di...	[{"id": 28, "name": "Action"}, {"id": 12, "nam...	[{"id": 1463, "name": "culture clash"}, {"id":...	[{"cast_id": 242, "character": "Jake Sully", "...	[{"credit_id": "52fe48009251416c750aca23", "de...
+1	285	Pirates of the Caribbean: At World's End	Captain Barbossa, long believed to be dead, ha...	[{"id": 12, "name": "Adventure"}, {"id": 14, "...	[{"id": 270, "name": "ocean"}, {"id": 726, "na...	[{"cast_id": 4, "character": "Captain Jack Spa...	[{"credit_id": "52fe4232c3a36847f800b579", "de...
+2	206647	Spectre	A cryptic message from Bond’s past sends him o...	[{"id": 28, "name": "Action"}, {"id": 12, "nam...	[{"id": 470, "name": "spy"}, {"id": 818, "name...	[{"cast_id": 1, "character": "James Bond", "cr...	[{"credit_id": "54805967c3a36829b5002c41", "de...
+3	49026	The Dark Knight Rises	Following the death of District Attorney Harve...	[{"id": 28, "name": "Action"}, {"id": 80, "nam...	[{"id": 849, "name": "dc comics"}, {"id": 853,...	[{"cast_id": 2, "character": "Bruce Wayne / Ba...	[{"credit_id": "52fe4781c3a36847f81398c3", "de...
+4	49529	John Carter	John Carter is a war-weary, former military ca...	[{"id": 28, "name": "Action"}, {"id": 12, "nam...	[{"id": 818, "name": "based on novel"}, {"id":...	[{"cast_id": 5, "character": "John Carter", "c...	[{"credit_id": "52fe479ac3a36847f813eaa3", "de...
+
+movies.isnull().sum()
+id          0
+title       0
+overview    3
+genres      0
+keywords    0
+cast        0
+crew        0
+dtype: int64
+
+movies.dropna(inplace=True)
+movies.isnull().sum()
+id          0
+title       0
+overview    0
+genres      0
+keywords    0
+cast        0
+crew        0
+dtype: int64
+
+movies.duplicated().sum()
+np.int64(0)
+
+movies.iloc[0].genres
+'[{"id": 28, "name": "Action"}, {"id": 12, "name": "Adventure"}, {"id": 14, "name": "Fantasy"}, {"id": 878, "name": "Science Fiction"}]'
+
+# '[{"id": 28, "name": "Action"}, {"id": 12, "name": "Adventure"}, {"id": 14, "name": "Fantasy"}, {"id": 878, "name": "Science Fiction"}]'
+# ['Action','Adventure','Fantasy','SciFi']
+
+import ast
+def convert(obj):
+    L=[]
+    for i in ast.literal_eval(obj):
+        L.append(i['name'])
+    return L
+
+movies['genres'].apply(convert)
+0       [Action, Adventure, Fantasy, Science Fiction]
+1                        [Adventure, Fantasy, Action]
+2                          [Action, Adventure, Crime]
+3                    [Action, Crime, Drama, Thriller]
+4                [Action, Adventure, Science Fiction]
+                            ...                      
+4804                        [Action, Crime, Thriller]
+4805                                [Comedy, Romance]
+4806               [Comedy, Drama, Romance, TV Movie]
+4807                                               []
+4808                                    [Documentary]
+Name: genres, Length: 4806, dtype: object
+
+movies.head()
+
+
+id	title	overview	genres	keywords	cast	crew
+0	19995	Avatar	In the 22nd century, a paraplegic Marine is di...	[Action, Adventure, Fantasy, Science Fiction]	[{"id": 1463, "name": "culture clash"}, {"id":...	[{"cast_id": 242, "character": "Jake Sully", "...	[{"credit_id": "52fe48009251416c750aca23", "de...
+1	285	Pirates of the Caribbean: At World's End	Captain Barbossa, long believed to be dead, ha...	[Adventure, Fantasy, Action]	[{"id": 270, "name": "ocean"}, {"id": 726, "na...	[{"cast_id": 4, "character": "Captain Jack Spa...	[{"credit_id": "52fe4232c3a36847f800b579", "de...
+2	206647	Spectre	A cryptic message from Bond’s past sends him o...	[Action, Adventure, Crime]	[{"id": 470, "name": "spy"}, {"id": 818, "name...	[{"cast_id": 1, "character": "James Bond", "cr...	[{"credit_id": "54805967c3a36829b5002c41", "de...
+3	49026	The Dark Knight Rises	Following the death of District Attorney Harve...	[Action, Crime, Drama, Thriller]	[{"id": 849, "name": "dc comics"}, {"id": 853,...	[{"cast_id": 2, "character": "Bruce Wayne / Ba...	[{"credit_id": "52fe4781c3a36847f81398c3", "de...
+4	49529	John Carter	John Carter is a war-weary, former military ca...	[Action, Adventure, Science Fiction]	[{"id": 818, "name": "based on novel"}, {"id":...	[{"cast_id": 5, "character": "John Carter", "c...	[{"credit_id": "52fe479ac3a36847f813eaa3", "de...
+
+movies['keywords']=movies['keywords'].apply(convert)
+
+cast – keep top 3 actors
+def convert_cast(obj):
+    L = []
+    for i in ast.literal_eval(obj):
+        L.append(i['name'])
+        if len(L) == 3:
+            break
+    return L
+
+movies['cast'] = movies['cast'].apply(convert_cast)
+
+crew – extract director only
+def get_director(obj):
+    for i in ast.literal_eval(obj):
+        if i['job'] == 'Director':
+            return [i['name']]
+    return []
+
+movies['crew'] = movies['crew'].apply(get_director)
+movies.head()
+
+
+id	title	overview	genres	keywords	cast	crew
+0	19995	Avatar	In the 22nd century, a paraplegic Marine is di...	[Action, Adventure, Fantasy, Science Fiction]	[culture clash, future, space war, space colon...	[Sam Worthington, Zoe Saldana, Sigourney Weaver]	[James Cameron]
+1	285	Pirates of the Caribbean: At World's End	Captain Barbossa, long believed to be dead, ha...	[Adventure, Fantasy, Action]	[ocean, drug abuse, exotic island, east india ...	[Johnny Depp, Orlando Bloom, Keira Knightley]	[Gore Verbinski]
+2	206647	Spectre	A cryptic message from Bond’s past sends him o...	[Action, Adventure, Crime]	[spy, based on novel, secret agent, sequel, mi...	[Daniel Craig, Christoph Waltz, Léa Seydoux]	[Sam Mendes]
+3	49026	The Dark Knight Rises	Following the death of District Attorney Harve...	[Action, Crime, Drama, Thriller]	[dc comics, crime fighter, terrorist, secret i...	[Christian Bale, Michael Caine, Gary Oldman]	[Christopher Nolan]
+4	49529	John Carter	John Carter is a war-weary, former military ca...	[Action, Adventure, Science Fiction]	[based on novel, mars, medallion, space travel...	[Taylor Kitsch, Lynn Collins, Samantha Morton]	[Andrew Stanton]
+
+
+movies['overview'] = movies['overview'].apply(lambda x:x.split())
+movies.head()
+
+id	title	overview	genres	keywords	cast	crew
+0	19995	Avatar	[In, the, 22nd, century,, a, paraplegic, Marin...	[Action, Adventure, Fantasy, Science Fiction]	[culture clash, future, space war, space colon...	[Sam Worthington, Zoe Saldana, Sigourney Weaver]	[James Cameron]
+1	285	Pirates of the Caribbean: At World's End	[Captain, Barbossa,, long, believed, to, be, d...	[Adventure, Fantasy, Action]	[ocean, drug abuse, exotic island, east india ...	[Johnny Depp, Orlando Bloom, Keira Knightley]	[Gore Verbinski]
+2	206647	Spectre	[A, cryptic, message, from, Bond’s, past, send...	[Action, Adventure, Crime]	[spy, based on novel, secret agent, sequel, mi...	[Daniel Craig, Christoph Waltz, Léa Seydoux]	[Sam Mendes]
+3	49026	The Dark Knight Rises	[Following, the, death, of, District, Attorney...	[Action, Crime, Drama, Thriller]	[dc comics, crime fighter, terrorist, secret i...	[Christian Bale, Michael Caine, Gary Oldman]	[Christopher Nolan]
+4	49529	John Carter	[John, Carter, is, a, war-weary,, former, mili...	[Action, Adventure, Science Fiction]	[based on novel, mars, medallion, space travel...	[Taylor Kitsch, Lynn Collins, Samantha Morton]	[Andrew Stanton]
+
+movies['genres'] = movies['genres'].apply(lambda x: [i.replace(" ", "") for i in x])
+movies['keywords'] = movies['keywords'].apply(lambda x: [i.replace(" ", "") for i in x])
+movies['cast'] = movies['cast'].apply(lambda x: [i.replace(" ", "") for i in x])
+movies['crew'] = movies['crew'].apply(lambda x: [i.replace(" ", "") for i in x])
+
+movies.head()
+
+id	title	overview	genres	keywords	cast	crew
+0	19995	Avatar	[In, the, 22nd, century,, a, paraplegic, Marin...	[Action, Adventure, Fantasy, ScienceFiction]	[cultureclash, future, spacewar, spacecolony, ...	[SamWorthington, ZoeSaldana, SigourneyWeaver]	[JamesCameron]
+1	285	Pirates of the Caribbean: At World's End	[Captain, Barbossa,, long, believed, to, be, d...	[Adventure, Fantasy, Action]	[ocean, drugabuse, exoticisland, eastindiatrad...	[JohnnyDepp, OrlandoBloom, KeiraKnightley]	[GoreVerbinski]
+2	206647	Spectre	[A, cryptic, message, from, Bond’s, past, send...	[Action, Adventure, Crime]	[spy, basedonnovel, secretagent, sequel, mi6, ...	[DanielCraig, ChristophWaltz, LéaSeydoux]	[SamMendes]
+3	49026	The Dark Knight Rises	[Following, the, death, of, District, Attorney...	[Action, Crime, Drama, Thriller]	[dccomics, crimefighter, terrorist, secretiden...	[ChristianBale, MichaelCaine, GaryOldman]	[ChristopherNolan]
+4	49529	John Carter	[John, Carter, is, a, war-weary,, former, mili...	[Action, Adventure, ScienceFiction]	[basedonnovel, mars, medallion, spacetravel, p...	[TaylorKitsch, LynnCollins, SamanthaMorton]	[AndrewStanton]
+
+movies['tags'] = movies['overview'] + movies['genres'] + movies['keywords'] + movies['cast'] + movies['crew']
+movies.head()
+
+id	title	overview	genres	keywords	cast	crew	tags
+0	19995	Avatar	[In, the, 22nd, century,, a, paraplegic, Marin...	[Action, Adventure, Fantasy, ScienceFiction]	[cultureclash, future, spacewar, spacecolony, ...	[SamWorthington, ZoeSaldana, SigourneyWeaver]	[JamesCameron]	[In, the, 22nd, century,, a, paraplegic, Marin...
+1	285	Pirates of the Caribbean: At World's End	[Captain, Barbossa,, long, believed, to, be, d...	[Adventure, Fantasy, Action]	[ocean, drugabuse, exoticisland, eastindiatrad...	[JohnnyDepp, OrlandoBloom, KeiraKnightley]	[GoreVerbinski]	[Captain, Barbossa,, long, believed, to, be, d...
+2	206647	Spectre	[A, cryptic, message, from, Bond’s, past, send...	[Action, Adventure, Crime]	[spy, basedonnovel, secretagent, sequel, mi6, ...	[DanielCraig, ChristophWaltz, LéaSeydoux]	[SamMendes]	[A, cryptic, message, from, Bond’s, past, send...
+3	49026	The Dark Knight Rises	[Following, the, death, of, District, Attorney...	[Action, Crime, Drama, Thriller]	[dccomics, crimefighter, terrorist, secretiden...	[ChristianBale, MichaelCaine, GaryOldman]	[ChristopherNolan]	[Following, the, death, of, District, Attorney...
+4	49529	John Carter	[John, Carter, is, a, war-weary,, former, mili...	[Action, Adventure, ScienceFiction]	[basedonnovel, mars, medallion, spacetravel, p...	[TaylorKitsch, LynnCollins, SamanthaMorton]	[AndrewStanton]	[John, Carter, is, a, war-weary,, former, mili...
+
+new_df = movies[['id','title','tags']].copy()
+new_df['tags'] = new_df['tags'].apply(lambda x:" ".join(x))
+new_df.head()
+
+id	title	tags
+0	19995	Avatar	In the 22nd century, a paraplegic Marine is di...
+1	285	Pirates of the Caribbean: At World's End	Captain Barbossa, long believed to be dead, ha...
+2	206647	Spectre	A cryptic message from Bond’s past sends him o...
+3	49026	The Dark Knight Rises	Following the death of District Attorney Harve...
+4	49529	John Carter	John Carter is a war-weary, former military ca...
+
+new_df['tags'][0]
+'In the 22nd century, a paraplegic Marine is dispatched to the moon Pandora on a unique mission, but becomes torn between following orders and protecting an alien civilization. Action Adventure Fantasy ScienceFiction cultureclash future spacewar spacecolony society spacetravel futuristic romance space alien tribe alienplanet cgi marine soldier battle loveaffair antiwar powerrelations mindandsoul 3d SamWorthington ZoeSaldana SigourneyWeaver JamesCameron'
+
+new_df['tags'] = new_df['tags'].apply(lambda x:x.lower())
+
+
+import nltk
+
+from nltk.stem.porter import PorterStemmer
+ps = PorterStemmer()
+
+
+def stem(text):
+    y = []
+
+    for i in text.split():
+        y.append(ps.stem(i))
+    return " ".join(y)
+
+new_df['tags'] = new_df['tags'].apply(stem)
+
+from sklearn.feature_extraction.text import TfidfVectorizer
+# Initialize the vectorizer
+tdidf = TfidfVectorizer(max_features=5000 , stop_words='english')
+#Fit and transform the tags
+vectors = tdidf.fit_transform(new_df['tags']).toarray()
+vectors.shape
+(4806, 5000)
+
+
+tdidf.get_feature_names_out()
+array(['000', '007', '10', ..., 'zone', 'zoo', 'zooeydeschanel'],
+      shape=(5000,), dtype=object)
+
+from sklearn.metrics.pairwise import cosine_similarity
+
+similarity = cosine_similarity(vectors)
+similarity.shape
+(4806, 4806)
+
+def recommend(movie):
+    movie = movie.lower()
+    if movie not in new_df['title'].str.lower().values:
+        return f"Movie '{movie}' not found in the dataset."
+
+    idx = new_df[new_df['title'].str.lower() == movie].index[0]
+    distances = list(enumerate(similarity[idx]))
+    movies_sorted = sorted(distances, key=lambda x: x[1], reverse=True)[1:6]
+
+    recommendations = [new_df.iloc[i[0]].title for i in movies_sorted]
+    return recommendations
+
+recommend('Batman Begins')
+['The Dark Knight',
+ 'The Dark Knight Rises',
+ 'Batman v Superman: Dawn of Justice',
+ 'Batman',
+ 'Batman Returns']
+
+import pickle
+# Save the DataFrame
+pickle.dump(new_df, open('movies.pkl', 'wb'))
+
+# Save the similarity matrix
+pickle.dump(similarity, open('similarity.pkl', 'wb'))
