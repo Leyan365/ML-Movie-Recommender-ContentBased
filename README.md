@@ -20,7 +20,8 @@ An End-to-End Movie Recommender System built using **Content-Based Filtering**, 
 
 ### 1. 📦 Setup Environment
 
-Ensure you have **Python 3.x** and install required dependencies:
+This project was developed and tested on Python 3.13.7.
+Older versions (e.g., < 3.8) may encounter compatibility issues.
 
 ```bash
 pip install pandas numpy scikit-learn streamlit requests nltk
