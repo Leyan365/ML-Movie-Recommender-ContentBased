@@ -51,7 +51,7 @@ Open and run all cells in `notebook.ipynb` to:
 This will generate two key files:
 
 - `movies.pkl` – cleaned movie metadata with tags
-- `similarity.pkl` – cosine similarity matrix (5000x5000)
+- `similarity.pkl` – cosine similarity matrix (4806x4806) (Although TF-IDF vectorization used max_features=5000, the final number of unique movie entries after data cleaning was 4806 — hence the similarity matrix is of shape (4806, 4806))
 
 ---
 
