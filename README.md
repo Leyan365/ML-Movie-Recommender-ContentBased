@@ -115,16 +115,6 @@ streamlit run app.py
 
 ---
 
-## ⚠️ Notes
-
-- Exclude `.pkl`, `.csv`, and `API keys` from your GitHub repo
-- Add these to your `.gitignore`:
-
-```
-*.pkl
-*.csv
-apikey.txt
-```
 
 ---
 
