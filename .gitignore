@@ -10,3 +10,4 @@ tmdb_5000_credits.csv
 similarity.pkl
 movies.pkl
 .vscode/ 
+.env 
