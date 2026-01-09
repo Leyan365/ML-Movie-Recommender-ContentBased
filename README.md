@@ -61,10 +61,10 @@ The app fetches movie posters using the TMDB API.
 
 - Create a free TMDB account → [https://www.themoviedb.org/](https://www.themoviedb.org/)
 - Navigate to [API section](https://www.themoviedb.org/settings/api) and generate a **v3 API key**
-- Replace the placeholder in `app.py`:
+- Create an .env file and store the api key in it.
 
 ```python
-url = f"https://api.themoviedb.org/3/movie/{movie_id}?api_key=YOUR_API_KEY_HERE&language=en-US"
+TMDB_API_KEY = os.getenv("API_KEY")
 ```
 
 > ✅ Don’t commit your real API key to GitHub. Use a placeholder when pushing!
